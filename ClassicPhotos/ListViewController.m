@@ -209,22 +209,22 @@
 
 - (void)loadImagesForOnscreenCells {
     
-    // 1
+    // 1 获取所有可见行
     NSSet *visibleRows = [NSSet setWithArray:[self.tableView indexPathsForVisibleRows]];
     
-    // 2
+    // 2 获取所有等待的操作（下载和滤镜的处理）
     NSMutableSet *pendingOperations = [NSMutableSet setWithArray:[self.pendingOperations.downloadsInProgress allKeys]];
     [pendingOperations addObjectsFromArray:[self.pendingOperations.filtrationsInProgress allKeys]];
     
     NSMutableSet *toBeCancelled = [pendingOperations mutableCopy];
     NSMutableSet *toBeStarted = [visibleRows mutableCopy];
     
-    // 3
+    // 3 所有开始的操作-pendings的数量
     [toBeStarted minusSet:pendingOperations];
-    // 4
+    // 4 所有取消的操作-visible rows的数量
     [toBeCancelled minusSet:visibleRows];
     
-    // 5
+    // 5 取消所有等待的操作
     for (NSIndexPath *anIndexPath in toBeCancelled) {
         
         ImageDownloader *pendingDownload = [self.pendingOperations.downloadsInProgress objectForKey:anIndexPath];
@@ -237,7 +237,7 @@
     }
     toBeCancelled = nil;
     
-    // 6
+    // 6 循环执行需要开始的操作
     for (NSIndexPath *anIndexPath in toBeStarted) {
         
         PhotoRecord *recordToProcess = [self.photos objectAtIndex:anIndexPath.row];
